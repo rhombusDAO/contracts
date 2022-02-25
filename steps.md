@@ -44,3 +44,34 @@ start vs code live server
 
 everything worked
 
+ContractFactory
+To deploy a Contract, additional information is needed that is not available on a Contract object itself.
+
+Mainly, the bytecode (more specifically the initcode) of a contract is required.
+
+The Contract Factory sends a special type of transaction, an initcode transaction (i.e. the to field is null, and the data field is the initcode) where the initcode will be evaluated and the result becomes the new code to be deployed as a new contract.
+
+with counter, we modified state, meaning that gas was used and a new block was created in order to deploy the contract
+
+You can only get data out of 'view' and 'pure' functions
+view - does not change state
+pure - does not read or write state
+
+public - anyone
+private - only me
+internal - me and subclasses
+external - public but I can't call it
+
+
+you can specify events!!!!!  this is it
+
+every transaction has a log field that you can look up, you can see the entire history of events that take place
+
+https://github.com/crytic/evm-opcodes
+https://ethgasstation.info/
+
+
+
+
+
+

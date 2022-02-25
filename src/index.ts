@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import Counter from "../artifacts/contracts/Counter.sol/Counter.json";
 
 async function hasSigners(): Promise<boolean> {
     //@ts-ignore
@@ -21,18 +22,35 @@ async function getContract() {
     }
 
     // @ts-ignore
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const provider = new ethers.providers.Web3Provider(window.ethereum).getSigner();
     const contract = new ethers.Contract(
         address,
-        [
-            "function hello() public pure returns(string memory)",
-        ], // abi
+        Counter.abi,
         provider
     );
 
-    console.log("We have done it, time to call");
-    console.log(await contract.hello());
-    document.body.innerHTML  = await contract.hello();
+    
+    const el = document.createElement("div");
+    async function setCounter(count?) {
+        el.innerHTML = count || await contract.getCounter();
+    }
+    setCounter();
+
+    const button = document.createElement("button");
+    button.innerText = "increment";
+    button.onclick = async function () {
+        await contract.count();
+        setCounter();
+    }
+
+    //ethers generates this nice functions
+    contract.on(contract.filters.CounterInc(), function(count) {
+        setCounter(count);
+    });
+
+    document.body.appendChild(el);
+    document.body.appendChild(button);
+
 }
 
 
