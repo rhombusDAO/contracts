@@ -70,6 +70,10 @@ every transaction has a log field that you can look up, you can see the entire h
 https://github.com/crytic/evm-opcodes
 https://ethgasstation.info/
 
+use hardhat gas reporter to find out how much your contract will cost on main net
+
+
+
 
 
 
