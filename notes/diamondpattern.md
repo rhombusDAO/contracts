@@ -30,5 +30,14 @@ the problem is that getting contracts to point to each other is going to result 
 
 
 
+ - if you call an address that does not exist, the contract will execute anyway
 
+ - if you create a struct it shares the data
+ - sometimes ERC721 sets their own storage
+ - it might mess up your storage
 
+ there's a solution
+ create a library
+
+ https://github.com/mudgen/diamond-3-hardhat
+ this the repo

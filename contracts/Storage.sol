@@ -9,13 +9,13 @@ struct AppStorage {
     address ContractA;
 }
 
-//never have to worry about to 
-library Storage {
-    bytes32 KEY = keccak256("my-storage-location");
-    function get() internal pure returns(AppStorage storage s) {
-        bytes32 k = KEY;
-        assembly {
-            s.slot = k;
-        }
-    }
-}
+// //never have to worry about to 
+// library Storage {
+//     bytes32 KEY = keccak256("my-storage-location");
+//     function get() internal pure returns(AppStorage storage s) {
+//         bytes32 k = KEY;
+//         assembly {
+//             s.slot = k;
+//         }
+//     }
+// }
