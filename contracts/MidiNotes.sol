@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 
+// code adapted from beat foundry
+
 pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 // NFT contract to inherit from.
@@ -37,7 +39,7 @@ contract MidiNotes is ERC721, Ownable {
     // mapping(uint256 => bytes) private _chords;
     mapping(uint256 => bytes2) private _timeDivisions;
 
-    bool public mintingEnabled;
+    bool public mintingEnabled = true;
 
     bytes32 private _allSeedsMerkleRoot;
 
@@ -48,7 +50,7 @@ contract MidiNotes is ERC721, Ownable {
 
     string private baseURI;
 
-    string public composer = "Shaw Avery @ShawAverySongs";
+    string public composer = "Justin Kuhn @JustinKuhnMedia";
 
     // CONSTRUCTOR ---------------------------------------------------
 
@@ -68,10 +70,10 @@ contract MidiNotes is ERC721, Ownable {
     //     baseURI = baseURI_;
     // }
 
-    // function setMintingEnabled(bool value, uint256 supply) public onlyOwner {
-    //     mintingEnabled = value;
-    //     totalSupply = supply;
-    // }
+    function setMintingEnabled(bool value, uint256 supply) public onlyOwner {
+        mintingEnabled = value;
+        totalSupply = supply;
+    }
 
     // function setMintPrice(uint256 value) public onlyOwner {
     //     mintPrice = value;
@@ -96,7 +98,7 @@ contract MidiNotes is ERC721, Ownable {
     function withdraw(address payable to, uint256 amount) public onlyOwner {
         require(
             address(this).balance >= amount,
-            "Ocarinas: Insufficient balance to withdraw"
+            "MIDI Notes: Insufficient balance to withdraw"
         );
         if (amount == 0) {
             amount = address(this).balance;
@@ -194,25 +196,26 @@ contract MidiNotes is ERC721, Ownable {
     //         );
     // }
 
-    function midi(uint256 tokenId)
+    function midi()
         external
         view
         virtual
         returns (string memory)
     {
-        require(_exists(tokenId), "Ocarinas: nonexistent token");
-        bytes5 seed = _seeds[tokenId];
+        // require(_exists(tokenId), "MIDI Notes: nonexistent token");
+        // bytes5 seed = _seeds[tokenId];
+
         bytes memory fmp = newTrack(
-            _firstMelodyParts[uint8(seed[0])][uint8(seed[1])]
+            _firstMelodyParts[uint8(0)][uint8(0)]
         );
         
 
         bytes memory mid = bytes.concat(
-            newMidi(6, uint8(seed[0])),
+            newMidi(6, uint8(4)),
             fmp
         );
 
-        string memory output = string(Base64.encode(mid));
+        string memory output = string(mid);
         return output;
     }
 
@@ -230,34 +233,23 @@ contract MidiNotes is ERC721, Ownable {
 
     // MINTING FUNCTIONS ---------------------------------------------------
 
-    function mint(
-        address to,
-        bytes5 seed
-        // bytes calldata pass
-        // bytes32[] calldata seedProof
-    ) external payable virtual {
-        require(mintingEnabled, "Ocarinas: minting disabled");
-        require(msg.value == mintPrice, "Ocarinas: incorrect minting price");
+    function mint() external payable virtual {
+        require(mintingEnabled, "MIDI Notes: minting disabled");
+        require(msg.value == mintPrice, "MIDI Notes: incorrect minting price");
+        // _tokenIdTracker.increment();
         uint256 tokenID = _tokenIdTracker.current();
 
-        require(tokenID < totalSupply, "Ocarinas: minting limit reached");
-        require(!_seedUsed[seed], "Ocarinas: seed already used");
+        require(tokenID < totalSupply, "MIDI Notes: minting limit reached");
 
-        // bytes32 hashedPass = keccak256(pass);
-        // require(
-        //     MerkleProof.verify(
-        //         seedProof,
-        //         _allSeedsMerkleRoot,
-        //         keccak256(abi.encodePacked(hashedPass, seed))
-        //     ),
-        //     "Ocarinas: invalid seed proof"
-        // );
-
+        bytes5 seed = bytes5(0xd8d6d3cdcd);
         _seeds[tokenID] = seed;
         _seedUsed[seed] = true;
 
-        _mint(to, tokenID);
+        _mint(msg.sender, tokenID);
+
         _tokenIdTracker.increment();
+
+        console.log(tokenID);
     }
 
     // MIDI FUNCTIONS ---------------------------------------------------
@@ -304,7 +296,8 @@ contract MidiNotes is ERC721, Ownable {
         it[5] = asBytes[asBytes.length - 3];
         it[6] = asBytes[asBytes.length - 2];
         it[7] = asBytes[asBytes.length - 1];
-        return bytes.concat(it, data);
+        // return bytes.concat(it, data);
+        return data;
     }
 
     // EXTRA FUNCTIONS ---------------------------------------------------
